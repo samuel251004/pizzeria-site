@@ -1,0 +1,1900 @@
+<html><head><base href="https://delizioso.italian/">
+<meta charset="UTF-8">
+<title>Delizioso - Menu et Carte des Vins</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<style>
+:root {
+  --primary: #8B0000;
+  --secondary: #F4EAE6;
+  --accent: #2C5530;
+  --text: #333333;
+  --highlight: #FFB74D;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Playfair Display', serif;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+  background-color: var(--secondary);
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+.hero {
+  height: 100vh;
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+              url('https://images.unsplash.com/photo-1513104890138-7c749659a591') center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: fadeIn 2s ease;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.about-section {
+  padding: 4rem 2rem;
+  background: white;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-section h2 {
+  color: var(--primary);
+  margin-bottom: 2rem;
+}
+
+.story-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.lead-text {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.value-card {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.value-icon {
+  margin-bottom: 1rem;
+}
+
+.team-section {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.team-member {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+}
+
+.role {
+  color: var(--primary);
+  font-style: italic;
+  margin: 0.5rem 0 1rem;
+}
+
+.chef-avatar, .sommelier-avatar {
+  margin-bottom: 1rem;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(139,0,0,0.95);
+  padding: 1rem;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  color: white;
+  text-decoration: none;
+}
+
+nav a:hover {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  color: white;
+}
+
+nav a i {
+  color: white;
+}
+
+.section-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.pizza-wheel {
+  width: 200px;
+  height: 200px;
+  margin: 2rem auto;
+}
+
+.pizza-wheel circle {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.menu-section {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+}
+
+.menu-category {
+  margin-bottom: 3rem;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.pizza-card, .dessert-card {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.pizza-card:hover, .dessert-card:hover {
+  transform: translateY(-5px);
+}
+
+.wine-pairing {
+  font-style: italic;
+  color: var(--primary);
+  margin-top: 1rem;
+}
+
+.price {
+  font-weight: bold;
+  color: var(--accent);
+  margin-top: 0.5rem;
+}
+
+.kids-menu {
+  background: #FFF8E7;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+}
+
+.kids-menu h3 {
+  color: #FF6B6B;
+}
+
+.dessert-section {
+  background: #FFF0F5;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+}
+
+.wine-list {
+  padding: 4rem 2rem;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wine-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.wine-card {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.wine-card:hover {
+  transform: translateY(-5px);
+}
+
+.wine-type {
+  color: var(--primary);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.wine-description {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.reservation-section {
+  padding: 4rem 2rem;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reservation-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.reservation-form {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group input:valid,
+.form-group select:valid {
+  border-color: var(--accent);
+}
+
+.form-group input:invalid,
+.form-group select:invalid {
+  border-color: #d32f2f;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.submit-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #6b0000;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.private-events {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.event-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.event-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.event-card h4 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.contact-events-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.contact-events-btn:hover {
+  background-color: #1a331d;
+}
+
+.events-section, .blog-section, .contact-section, .gallery-section {
+  padding: 4rem 2rem;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.event-card-large {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.event-card-large:hover {
+  transform: translateY(-5px);
+}
+
+.event-date {
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.blog-card {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.recipe-steps {
+  list-style-type: none;
+  counter-reset: recipe-step;
+  padding-left: 2rem;
+}
+
+.recipe-steps li {
+  counter-increment: recipe-step;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.recipe-steps li::before {
+  content: counter(recipe-step);
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -2rem;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.gallery-item {
+  position: relative;
+  padding-bottom: 100%;
+  background: var(--secondary);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.gallery-item svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonials-section {
+  background: var(--secondary);
+  padding: 3rem 2rem;
+  margin-top: 3rem;
+}
+
+.review-form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.review-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.rating-input {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.rating-input input {
+  display: none;
+}
+
+.rating-input label {
+  font-size: 2rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.rating-input label:hover,
+.rating-input label:hover ~ label,
+.rating-input input:checked ~ label {
+  color: gold;
+}
+
+#reviews-container {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.testimonial-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.map-container {
+  height: 400px;
+  margin-top: 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.background-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.15;
+}
+
+.rustic-table {
+  background: linear-gradient(rgba(139,0,0,0.1), rgba(139,0,0,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%238B4513'/%3E%3Cpath d='M0 0h400v400H0z' fill='%23A0522D' fill-opacity='0.3'/%3E%3Cpath d='M100 100h200v200H100z' fill='none' stroke='%23F4EAE6' stroke-width='2' opacity='0.2'/%3E%3C/svg%3E");
+}
+
+.vineyard {
+  background: linear-gradient(rgba(44,85,48,0.1), rgba(44,85,48,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%232C5530'/%3E%3Cpath d='M0 200 Q 200 150 400 200' stroke='%23F4EAE6' fill='none' stroke-width='2' opacity='0.1'/%3E%3Cpath d='M0 250 Q 200 200 400 250' stroke='%23F4EAE6' fill='none' stroke-width='2' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+.traditional-pizzeria {
+  background: linear-gradient(rgba(139,0,0,0.1), rgba(139,0,0,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%238B0000'/%3E%3Ccircle cx='200' cy='200' r='150' fill='none' stroke='%23F4EAE6' stroke-width='2' opacity='0.2'/%3E%3Cpath d='M150 150L250 250M150 250L250 150' stroke='%23F4EAE6' stroke-width='2' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+.wine-glass {
+  background: linear-gradient(rgba(139,0,0,0.1), rgba(139,0,0,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%238B0000'/%3E%3Cpath d='M180 100Q200 150 220 100L220 300L180 300Z' fill='%23F4EAE6' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+.fresh-ingredients {
+  background: linear-gradient(rgba(44,85,48,0.1), rgba(44,85,48,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%232C5530'/%3E%3Ccircle cx='200' cy='200' r='50' fill='%23F4EAE6' opacity='0.1'/%3E%3Ccircle cx='100' cy='100' r='30' fill='%23F4EAE6' opacity='0.1'/%3E%3Ccircle cx='300' cy='300' r='40' fill='%23F4EAE6' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+.sunny-terrace {
+  background: linear-gradient(rgba(244,234,230,0.1), rgba(244,234,230,0.1)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23F4EAE6'/%3E%3Cpath d='M0 200h400M200 0v400' stroke='%238B0000' stroke-width='1' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+.cta-button {
+  background: var(--highlight);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.order-section, .loyalty-section {
+  padding: 4rem 2rem;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pizza-customizer {
+  background: var(--secondary);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-top: 2rem;
+}
+
+.toppings-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.topping-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 5px;
+}
+
+.delivery-options {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.promotion-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+  animation: slideIn 0.5s ease;
+}
+
+.loyalty-card {
+  background: var(--primary);
+  color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.points-display {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.social-share {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.share-button:hover {
+  opacity: 0.9;
+}
+
+.share-button.facebook {
+  background: #3b5998;
+}
+
+.share-button.instagram {
+  background: #e1306c;
+}
+
+.share-button.whatsapp {
+  background: #25d366;
+}
+
+.accessibility-controls {
+  position: fixed;
+  top: 80px; /* Move it just below the navigation bar */
+  right: 0;
+  transform: none; /* Remove the vertical centering */    
+  background: white;
+  padding: 1rem;
+  border-radius: 10px 0 0 10px;
+  box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+  z-index: 999; /* Lower than chat (1000) */
+}
+
+.control-group {
+  margin-bottom: 1rem;
+}
+
+.control-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.font-size-control {
+  width: 100%;
+}
+
+body.high-contrast {
+  background: black;
+  color: white;
+}
+
+body.high-contrast .section-title {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .delivery-options, .social-share {
+    flex-direction: column;
+  }
+  
+  .accessibility-controls {
+    display: none;
+  }
+  
+  .toppings-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .social-share {
+    flex-direction: column;
+  }
+  
+  .share-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 0.5rem;
+  }
+
+  nav a {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .value-card, .menu-card, .wine-card {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .cta-button {
+    width: 100%;
+    text-align: center;
+    padding: 1.2rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin: 2rem 0;
+  }
+}
+
+.logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+section {
+  padding: 6rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.social-sharing {
+  padding: 2rem;
+  text-align: center;
+  background: white;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+  display: none;
+}
+
+.chatbot.active {
+  display: block;
+}
+
+.chatbot-header {
+  background: var(--primary);
+  color: white;
+  padding: 1rem;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-header h3 {
+  margin: 0;
+}
+
+.chatbot-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.chatbot-body {
+  padding: 1rem;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  max-height: 300px;
+}
+
+.chat-message {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.user-message {
+  background: var(--secondary);
+  margin-left: auto;
+}
+
+.bot-message {
+  background: #f0f0f0;
+  margin-right: auto;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input input {
+  flex-grow: 1;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.chat-input button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-trigger {
+  position: fixed;
+  bottom: 20px;  
+  right: 20px;
+  z-index: 1000;
+  background: #8B0000; /* Add red background */
+  border-radius: 50%; /* Make it circular */
+  padding: 15px; /* Increase padding for larger size */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add subtle shadow */
+}
+
+.chat-trigger i {
+  font-size: 2rem; /* Increase icon size */
+  color: white; /* Make icon white for contrast */
+}
+
+.chat-trigger:hover {
+  transform: scale(1.1); /* Slight grow effect on hover */
+  background: #6b0000; /* Darker red on hover */
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="logo">
+  <svg viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="55" fill="none" stroke="var(--primary)" stroke-width="2"/>
+    <path d="M30,60 A30,30 0 0,1 90,60 A30,30 0 0,1 30,60" fill="none" stroke="var(--primary)" stroke-width="2"/>
+    <text x="60" y="70" text-anchor="middle" fill="var(--primary)" font-family="Playfair Display" font-size="14">Delizioso</text>
+  </svg>
+</div>
+
+<nav>
+  <a href="#about"><i class="fas fa-info-circle"></i> À Propos</a>
+  <a href="#menu"><i class="fas fa-pizza-slice"></i> Menu</a>
+  <a href="#vins"><i class="fas fa-wine-glass-alt"></i> Vins</a>
+  <a href="#events"><i class="far fa-calendar-alt"></i> Événements</a>
+  <a href="#blog"><i class="fas fa-book-open"></i> Blog & Recettes</a>
+  <a href="#reservation"><i class="far fa-calendar-alt"></i> Réservation</a>
+  <a href="#contact"><i class="far fa-envelope"></i> Contact</a>
+</nav>
+
+<div class="hero">
+  <div>
+    <h1>Delizioso</h1>
+    <p>L'authentique pizza italienne, accompagnée des meilleurs vins</p>
+    <svg class="pizza-wheel" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="45"/>
+      <path d="M50,5 L50,95 M5,50 L95,50" stroke="white" stroke-width="2"/>
+      <circle cx="50" cy="50" r="25" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+
+<section class="about-section" id="about">
+  <h2 class="section-title">Notre Histoire</h2>
+  
+  <div class="story-container">
+    <div class="story-text">
+      <p class="lead-text">Depuis 1985, Delizioso perpétue la tradition napolitaine au cœur de la ville.</p>
+      <p>Fondé par la famille Rossi, notre restaurant est né d'une passion transmise de génération en génération pour la véritable pizza napolitaine. Notre histoire commence dans les ruelles de Naples, où notre grand-père Giovanni perfectionna l'art de la pizza avant d'apporter son savoir-faire unique.</p>
+    </div>
+    
+    <div class="values-grid">
+      <div class="value-card">
+        <svg class="value-icon" viewBox="0 0 24 24" width="48" height="48">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="var(--primary)" stroke-width="2"/>
+          <path d="M8,12 L11,15 L16,9" stroke="var(--primary)" stroke-width="2" fill="none"/>
+        </svg>
+        <h3>Qualité</h3>
+        <p>Ingrédients selectionnés avec soin auprès de producteurs locaux et importation directe des meilleurs produits italiens.</p>
+      </div>
+      
+      <div class="value-card">
+        <svg class="value-icon" viewBox="0 0 24 24" width="48" height="48">
+          <path d="M12,2 L15,8 L21,9 L16.5,14 L18,20 L12,17 L6,20 L7.5,14 L3,9 L9,8 Z" fill="none" stroke="var(--primary)" stroke-width="2"/>
+        </svg>
+        <h3>Tradition</h3>
+        <p>Respect des méthodes ancestrales napolitaines et cuisson au four à bois traditionnel.</p>
+      </div>
+      
+      <div class="value-card">
+        <svg class="value-icon" viewBox="0 0 24 24" width="48" height="48">
+          <circle cx="12" cy="12" r="5" fill="none" stroke="var(--primary)" stroke-width="2"/>
+          <path d="M12,2 C6.5,2 2,6.5 2,12" stroke="var(--primary)" stroke-width="2" fill="none"/>
+          <path d="M12,2 C17.5,2 22,6.5 22,12" stroke="var(--primary)" stroke-width="2" fill="none"/>
+        </svg>
+        <h3>Durabilité</h3>
+        <p>Engagement écologique avec des produits bio et locaux, réduction des déchets et emballages écologiques.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <h3>Notre Équipe</h3>
+    <div class="team-grid">
+      <div class="team-member">
+        <svg class="chef-avatar" viewBox="0 0 100 100" width="120" height="120">
+          <circle cx="50" cy="40" r="25" fill="var(--primary)"/>
+          <path d="M50,70 Q50,85 30,95 L70,95 Q50,85 50,70" fill="var(--primary)"/>
+          <circle cx="42" cy="35" r="3" fill="white"/>
+          <circle cx="58" cy="35" r="3" fill="white"/>
+          <path d="M43,45 Q50,50 57,45" fill="none" stroke="white" stroke-width="2"/>
+        </svg>
+        <h4>Marco Rossi</h4>
+        <p class="role">Chef Pizzaiolo</p>
+        <p>Formé à Naples, Marco perpétue la tradition familiale avec passion depuis plus de 30 ans.</p>
+      </div>
+      
+      <div class="team-member">
+        <svg class="sommelier-avatar" viewBox="0 0 100 100" width="120" height="120">
+          <circle cx="50" cy="40" r="25" fill="var(--accent)"/>
+          <path d="M50,70 Q50,85 30,95 L70,95 Q50,85 50,70" fill="var(--accent)"/>
+          <circle cx="42" cy="35" r="3" fill="white"/>
+          <circle cx="58" cy="35" r="3" fill="white"/>
+          <path d="M43,45 Q50,48 57,45" fill="none" stroke="white" stroke-width="2"/>
+        </svg>
+        <h4>Sofia Conti</h4>
+        <p class="role">Sommelière</p>
+        <p>Experte en vins italiens, Sofia crée des accords mets-vins parfaits pour sublimer chaque pizza.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="menu-section" id="menu">
+  <h2 class="section-title">Notre Menu</h2>
+  
+  <div class="menu-category">
+    <h3>Pizzas Traditionnelles</h3>
+    <div class="menu-grid">
+      <div class="pizza-card">
+        <h4>Margherita D.O.P.</h4>
+        <p>Tomates San Marzano, Mozzarella di Bufala Campana, Basilic frais</p>
+        <p class="wine-pairing">Vin conseillé: Chianti Classico DOCG</p>
+        <p class="price">14€</p>
+      </div>
+
+      <div class="pizza-card">
+        <h4>Tartufo Nero</h4>
+        <p>Crème de truffe noire, Mozzarella, Champignons sauvages, Roquette</p>
+        <p class="wine-pairing">Vin conseillé: Barolo DOCG</p>
+        <p class="price">24€</p>
+      </div>
+
+      <div class="pizza-card">
+        <h4>Quattro Formaggi</h4>
+        <p>Gorgonzola DOP, Parmigiano Reggiano, Mozzarella, Taleggio</p>
+        <p class="wine-pairing">Vin conseillé: Primitivo di Manduria</p>
+        <p class="price">18€</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kids-menu">
+    <h3>Menu Bambini</h3>
+    <div class="menu-grid">
+      <div class="pizza-card">
+        <h4>Mini Margherita</h4>
+        <p>Version plus petite de notre classique</p>
+        <p class="price">10€</p>
+      </div>
+      
+      <div class="pizza-card">
+        <h4>Pizza Teddy</h4>
+        <p>Pizza en forme d'ours avec jambon et mozzarella</p>
+        <p class="price">12€</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dessert-section">
+    <h3>Dolci</h3>
+    <div class="menu-grid">
+      <div class="dessert-card">
+        <h4>Tiramisu Traditionnel</h4>
+        <p>Fait maison avec mascarpone et café italien</p>
+        <p class="price">8€</p>
+      </div>
+
+      <div class="dessert-card">
+        <h4>Cannoli Siciliani</h4>
+        <p>Garnis de ricotta sucrée et pépites de chocolat</p>
+        <p class="price">7€</p>
+      </div>
+
+      <div class="dessert-card">
+        <h4>Panna Cotta</h4>
+        <p>Coulis de fruits rouges maison</p>
+        <p class="price">7€</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wine-list" id="vins">
+  <h2 class="section-title">Notre Cave à Vins</h2>
+  
+  <div class="wine-grid">
+    <div class="wine-card">
+      <h3>Vins Rouges</h3>
+      <div class="wine-type">Chianti Classico DOCG</div>
+      <p class="wine-description">Notes de cerises noires, de cuir et d'épices. Structure élégante avec des tanins soyeux.</p>
+      <p class="price">Verre: 8€ | Bouteille: 42€</p>
+    </div>
+
+    <div class="wine-card">
+      <h3>Vins Blancs</h3>
+      <div class="wine-type">Verdicchio dei Castelli di Jesi DOC</div>
+      <p class="wine-description">Arômes d'amande, de citron et de pomme verte. Frais et minéral.</p>
+      <p class="price">Verre: 7€ | Bouteille: 36€</p>
+    </div>
+
+    <div class="wine-card">
+      <h3>Vins Pétillants</h3>
+      <div class="wine-type">Prosecco DOCG</div>
+      <p class="wine-description">Bulles fines et délicates. Notes de pommes vertes, de poires et de fleurs blanches.</p>
+      <p class="price">Verre: 6€ | Bouteille: 32€</p>
+    </div>
+  </div>
+</section>
+
+<section class="reservation-section" id="reservation">
+  <h2 class="section-title">Réservation</h2>
+  
+  <div class="reservation-container">
+    <div class="reservation-form">
+      <h3>Réservation Standard</h3>
+      <form id="bookingForm">
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="date" id="date" required min="">
+        </div>
+        
+        <div class="form-group">
+          <label for="time">Heure</label>
+          <select id="time" required>
+            <option value="">Sélectionnez une heure</option>
+            <option value="12:00">12:00</option>
+            <option value="12:30">12:30</option>
+            <option value="13:00">13:00</option>
+            <option value="13:30">13:30</option>
+            <option value="19:00">19:00</option>
+            <option value="19:30">19:30</option>
+            <option value="20:00">20:00</option>
+            <option value="20:30">20:30</option>
+            <option value="21:00">21:00</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="guests">Nombre de personnes</label>
+          <select id="guests" required>
+            <option value="">Sélectionnez le nombre</option>
+            <option value="1">1 personne</option>
+            <option value="2">2 personnes</option>
+            <option value="3">3 personnes</option>
+            <option value="4">4 personnes</option>
+            <option value="5">5 personnes</option>
+            <option value="6">6 personnes</option>
+            <option value="7+">7 ou plus</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Nom</label>
+          <input type="text" id="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Réserver</button>
+      </form>
+    </div>
+
+    <div class="private-events">
+      <h3>Événements Privés</h3>
+      <p>Organisez vos événements spéciaux chez Delizioso</p>
+      <div class="event-types">
+        <div class="event-card">
+          <h4>Anniversaires</h4>
+          <p>Capacité jusqu'à 30 personnes</p>
+          <p>Menu personnalisé disponible</p>
+        </div>
+        <div class="event-card">
+          <h4>Soirées Entreprise</h4>
+          <p>Espaces privatisables</p>
+          <p>Service traiteur sur mesure</p>
+        </div>
+      </div>
+      <button class="contact-events-btn">Contactez-nous pour les événements</button>
+    </div>
+  </div>
+</section>
+
+<section class="events-section" id="events">
+  <h2 class="section-title">Événements & Promotions</h2>
+  
+  <div class="event-card-large">
+    <div class="event-date">Tous les Jeudis - 19h00</div>
+    <h3>Soirée Dégustation de Vins</h3>
+    <p>Découvrez notre sélection de vins italiens accompagnée de pizzas signatures.</p>
+    <button class="submit-btn">Réserver votre place</button>
+  </div>
+
+  <div class="event-card-large">
+    <div class="event-date">Samedi 15 Décembre - 15h00</div>
+    <h3>Atelier Pizza en Famille</h3>
+    <p>Apprenez à faire votre propre pizza avec notre chef pizzaiolo.</p>
+    <button class="submit-btn">S'inscrire à l'atelier</button>
+  </div>
+</section>
+
+<section class="blog-section" id="blog">
+  <h2 class="section-title">Blog & Recettes</h2>
+  
+  <div class="blog-grid">
+    <div class="blog-card">
+      <h3>La Pâte Parfaite</h3>
+      <p>Les secrets d'une authentique pâte napolitaine</p>
+      <ol class="recipe-steps">
+        <li>Mélanger la farine avec la levure</li>
+        <li>Ajouter l'eau tiède progressivement</li>
+        <li>Pétrir pendant 20 minutes</li>
+        <li>Laisser reposer 24h</li>
+      </ol>
+    </div>
+
+    <div class="blog-card">
+      <h3>Guide des Vins</h3>
+      <p>Comment choisir le vin parfait pour votre pizza</p>
+      <ul>
+        <li>Margherita → Chianti Classico</li>
+        <li>Quatre Fromages → Barolo</li>
+        <li>Marinara → Verdicchio</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <h2 class="section-title">Notre Galerie</h2>
+  
+  <div class="gallery-grid">
+    <div class="gallery-item">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <rect width="200" height="200" fill="#8B4513"/>
+            <rect x="10" y="10" width="180" height="180" fill="#A0522D" rx="5"/>
+            <circle cx="100" cy="100" r="80" fill="#F4A460"/>
+            <circle cx="100" cy="100" r="75" fill="#FF6B6B"/>
+            <circle cx="80" cy="90" r="15" fill="#FFF"/>
+            <circle cx="120" cy="85" r="12" fill="#FFF"/>
+            <circle cx="95" cy="120" r="14" fill="#FFF"/>
+            <path d="M70,70 Q80,60 90,70 Q80,80 70,70" fill="#228B22"/>
+            <path d="M130,110 Q140,100 150,110 Q140,120 130,110" fill="#228B22"/>
+            <path d="M60,60 Q120,90 140,120" stroke="#FFD700" stroke-width="2" fill="none"/>
+        </svg>
+    </div>
+
+    <div class="gallery-item">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <rect width="200" height="200" fill="#8B4513"/>
+            <rect x="40" y="40" width="30" height="120" fill="#8B0000"/>
+            <rect x="85" y="40" width="30" height="120" fill="#F4EAE6"/>
+            <rect x="130" y="40" width="30" height="120" fill="#FFB6C1"/>
+            <path d="M45,180 L55,180 L50,150 Q40,140 50,120 Q60,140 50,150 Z" fill="none" stroke="#crystal" stroke-width="2"/>
+            <path d="M90,180 L100,180 L95,150 Q85,140 95,120 Q105,140 95,150 Z" fill="none" stroke="#crystal" stroke-width="2"/>
+            <path d="M135,180 L145,180 L140,150 Q130,140 140,120 Q150,140 140,150 Z" fill="none" stroke="#crystal" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="gallery-item">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <rect width="200" height="200" fill="#F4EAE6"/>
+            <rect x="20" y="120" width="160" height="60" fill="#8B4513"/>
+            <circle cx="60" cy="80" r="20" fill="#8B0000"/>
+            <circle cx="100" cy="70" r="20" fill="#2C5530"/>
+            <circle cx="140" cy="80" r="20" fill="#8B0000"/>
+            <circle cx="100" cy="140" r="30" fill="#F4A460"/>
+            <rect x="70" y="150" width="10" height="20" fill="#8B0000"/>
+        </svg>
+    </div>
+
+    <div class="gallery-item">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <rect width="200" height="200" fill="#2C1810"/>
+            <path d="M80,40 L120,40 L110,120 L90,120 Z" fill="#000"/>
+            <rect x="90" y="80" width="20" height="60" fill="#8B0000"/>
+            <path d="M85,150 L115,150 L100,180 Z" fill="#crystal"/>
+            <path d="M100,140 Q110,160 100,180" stroke="#8B0000" stroke-width="3" fill="none"/>
+        </svg>
+    </div>
+
+    <div class="gallery-item">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <rect width="200" height="200" fill="#8B4513"/>
+            <rect x="50" y="60" width="100" height="80" fill="#F4EAE6"/>
+            <rect x="50" y="80" width="100" height="20" fill="#8B4513"/>
+            <rect x="50" y="100" width="100" height="20" fill="#F4EAE6"/>
+            <rect x="50" y="60" width="100" height="10" fill="#3C1810" opacity="0.5"/>
+            <path d="M140,120 L160,120 L150,90 Q140,80 150,60 Q160,80 150,90 Z" fill="none" stroke="#crystal" stroke-width="2"/>
+        </svg>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <h2 class="section-title">Avis Clients</h2>
+  
+  <div id="reviews-container">
+    <div class="testimonial-card">
+      <p class="rating">★★★★★</p>
+      <p>"La meilleure pizza en dehors de Naples ! Le vin recommandé était parfait."</p>
+      <p>- Marie D.</p>
+    </div>
+  </div>
+
+  <div class="review-form-container">
+    <h3>Laissez votre avis</h3>
+    <form id="review-form" class="review-form">
+      <div class="form-group">
+        <label for="reviewer-name">Votre nom</label>
+        <input type="text" id="reviewer-name" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Votre note</label>
+        <div class="rating-input">
+          <input type="radio" id="star5" name="rating" value="5" required>
+          <label for="star5">★</label>
+          <input type="radio" id="star4" name="rating" value="4">
+          <label for="star4">★</label>
+          <input type="radio" id="star3" name="rating" value="3">
+          <label for="star3">★</label>
+          <input type="radio" id="star2" name="rating" value="2">
+          <label for="star2">★</label>
+          <input type="radio" id="star1" name="rating" value="1">
+          <label for="star1">★</label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="review-text">Votre commentaire</label>
+        <textarea id="review-text" rows="4" required></textarea>
+      </div>
+      
+      <button type="submit" class="submit-btn">Publier votre avis</button>
+    </form>
+  </div>
+</section>
+
+<section class="social-sharing">
+  <h2 class="section-title">Partagez Votre Expérience</h2>
+  <div class="social-share">
+    <button onclick="shareToFacebook()" class="share-button facebook">
+      <i class="fab fa-facebook"></i> Facebook
+    </button>
+    <button onclick="shareToInstagram()" class="share-button instagram">
+      <i class="fab fa-instagram"></i> Instagram
+    </button>
+    <button onclick="shareToWhatsapp()" class="share-button whatsapp">
+      <i class="fab fa-whatsapp"></i> WhatsApp
+    </button>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <h2 class="section-title">Contact</h2>
+  
+  <div class="contact-form">
+    <div class="form-group">
+      <label for="contact-name">Nom</label>
+      <input type="text" id="contact-name" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="contact-email">Email</label>
+      <input type="email" id="contact-email" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="contact-message">Message</label>
+      <textarea id="contact-message" rows="5" required></textarea>
+    </div>
+    
+    <button type="submit" class="submit-btn">Envoyer</button>
+  </div>
+  
+  <div class="map-container">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <rect width="100" height="100" fill="#F4EAE6"/>
+      <circle cx="50" cy="50" r="5" fill="#8B0000"/>
+      <text x="50" y="65" text-anchor="middle" fill="#8B0000">Delizioso</text>
+    </svg>
+  </div>
+</section>
+
+<div class="chat-trigger" id="chatTrigger">
+  <i class="fas fa-comments"></i>
+</div>
+
+<div class="chatbot" id="chatbot">
+  <div class="chatbot-header">
+    <h3>Assistant Delizioso</h3>
+    <button class="chatbot-close" id="chatClose">&times;</button>
+  </div>
+  <div class="chatbot-body">
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-message bot-message">
+        Bonjour ! Je suis là pour vous aider. Que puis-je faire pour vous ?
+      </div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Tapez votre message...">
+      <button id="chatSubmit">Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<div class="accessibility-controls">
+  <div class="control-group">
+    <label for="font-size">Taille du texte:</label>
+    <input type="range" id="font-size" class="font-size-control" min="100" max="200" value="100">
+  </div>
+  <div class="control-group">
+    <label for="contrast">Contraste élevé:</label>
+    <input type="checkbox" id="contrast" class="contrast-control">
+  </div>
+</div>
+
+<script>
+const accessibility = {
+  initialize() {
+    this.setupControls();
+    this.loadPreferences();
+  },
+
+  setupControls() {
+    const fontSizeControl = document.getElementById('font-size');
+    const contrastControl = document.getElementById('contrast');
+
+    if (fontSizeControl) {
+      fontSizeControl.addEventListener('input', (e) => {
+        this.changeFontSize(e.target.value);
+      });
+    }
+
+    if (contrastControl) {
+      contrastControl.addEventListener('change', (e) => {
+        this.toggleHighContrast(e.target.checked);
+      });
+    }
+  },
+
+  changeFontSize(size) {
+    document.body.style.fontSize = `${size}%`;
+    localStorage.setItem('fontSize', size);
+  },
+
+  toggleHighContrast(enabled) {
+    if (enabled) {
+      document.body.classList.add('high-contrast');
+    } else {
+      document.body.classList.remove('high-contrast');
+    }
+    localStorage.setItem('highContrast', enabled);
+  },
+
+  loadPreferences() {
+    const fontSize = localStorage.getItem('fontSize');
+    const highContrast = localStorage.getItem('highContrast') === 'true';
+
+    if (fontSize) {
+      const fontSizeControl = document.getElementById('font-size');
+      if (fontSizeControl) {
+        fontSizeControl.value = fontSize;
+        this.changeFontSize(fontSize);
+      }
+    }
+
+    if (highContrast) {
+      const contrastControl = document.getElementById('contrast');
+      if (contrastControl) {
+        contrastControl.checked = true;
+        this.toggleHighContrast(true);
+      }
+    }
+  }
+};
+
+const reservationSystem = {
+  initialize() {
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+      this.setupDateConstraints();
+      bookingForm.addEventListener('submit', (e) => this.handleReservation(e));
+    }
+  },
+
+  setupDateConstraints() {
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = today;
+      
+      const maxDate = new Date();
+      maxDate.setMonth(maxDate.getMonth() + 3);
+      dateInput.max = maxDate.toISOString().split('T')[0];
+    }
+  },
+
+  handleReservation(e) {
+    e.preventDefault();
+    
+    const formData = {
+      date: document.getElementById('date').value,
+      time: document.getElementById('time').value,
+      guests: document.getElementById('guests').value,
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value
+    };
+
+    if (this.checkAvailability(formData)) {
+      this.confirmReservation(formData);
+    } else {
+      this.showNoAvailabilityMessage();
+    }
+  },
+
+  checkAvailability(formData) {
+    const randomAvailable = Math.random() > 0.3;
+    return randomAvailable;
+  },
+
+  confirmReservation(formData) {
+    Toastify({
+      text: "Réservation confirmée ! Un email de confirmation va vous être envoyé.",
+      duration: 5000,
+      style: {
+        background: "var(--primary)",
+      }
+    }).showToast();
+    document.getElementById('bookingForm').reset();
+  },
+
+  showNoAvailabilityMessage() {
+    Toastify({
+      text: "Désolé, cette plage horaire n'est pas disponible. Veuillez sélectionner un autre moment.",
+      duration: 5000,
+      style: {
+        background: "#D32F2F",
+      }
+    }).showToast();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  const orderSystem = {
+    initialize() {
+      this.cart = [];
+      this.setupEventListeners();
+    },
+
+    setupEventListeners() {
+      document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const pizzaId = e.target.dataset.pizzaId;
+          this.addToCart(pizzaId);
+        });
+      });
+    },
+
+    addToCart(pizzaId) {
+      this.cart.push(pizzaId);
+      this.updateCartUI();
+      Toastify({
+        text: "Pizza ajoutée au panier!",
+        duration: 3000
+      }).showToast();
+    }
+  };
+
+  const loyaltySystem = {
+    points: 0,
+    
+    initialize() {
+      this.loadPoints();
+      this.updateUI();
+    },
+
+    addPoints(amount) {
+      this.points += amount;
+      this.savePoints();
+      this.updateUI();
+    },
+
+    loadPoints() {
+      this.points = parseInt(localStorage.getItem('loyaltyPoints')) || 0;
+    },
+
+    savePoints() {
+      localStorage.setItem('loyaltyPoints', this.points.toString());
+    },
+
+    updateUI() {
+      const pointsDisplay = document.querySelector('.points-display');
+      if (pointsDisplay) {
+        pointsDisplay.textContent = this.points;
+      }
+    }
+  };
+
+  const newsletter = {
+    subscribe(email) {
+      Toastify({
+        text: "Merci de votre inscription à la newsletter!",
+        duration: 3000
+      }).showToast();
+    }
+  };
+
+  function initMap() {
+    if (typeof google === 'undefined') {
+      console.warn('Google Maps not loaded');
+      const mapContainer = document.querySelector('.map-container');
+      if (mapContainer) {
+        mapContainer.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <p>La carte n'a pas pu être chargée.</p>
+            <p>Retrouvez-nous au cœur de Paris!</p>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    try {
+      const pizzeriaLocation = { 
+        lat: 48.8566,
+        lng: 2.3522 
+      };
+      
+      const map = new google.maps.Map(document.querySelector('.map-container'), {
+        zoom: 15,
+        center: pizzeriaLocation,
+        styles: [
+          {
+            featureType: "poi.business",
+            elementType: "labels",
+            stylers: [{ visibility: "on" }]
+          }
+        ]
+      });
+      
+      const marker = new google.maps.Marker({
+        position: pizzeriaLocation,
+        map: map,
+        title: 'Delizioso',
+        animation: google.maps.Animation.DROP
+      });
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="padding: 10px;">
+            <h3 style="margin: 0 0 5px 0;">Delizioso</h3>
+            <p style="margin: 0;">Votre authentique pizzeria italienne</p>
+          </div>
+        `
+      });
+
+      marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+      });
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      const mapContainer = document.querySelector('.map-container');
+      if (mapContainer) {
+        mapContainer.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <p>La carte n'a pas pu être chargée.</p>
+            <p>Retrouvez-nous au cœur de Paris!</p>
+          </div>
+        `;
+      }
+    }
+  }
+
+  const reviewSystem = {
+    initialize() {
+      this.reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+      this.setupEventListeners();
+      this.displayReviews();
+    },
+
+    setupEventListeners() {
+      const form = document.getElementById('review-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.submitReview();
+        });
+      }
+    },
+
+    submitReview() {
+      const name = document.getElementById('reviewer-name').value;
+      const rating = document.querySelector('input[name="rating"]:checked').value;
+      const text = document.getElementById('review-text').value;
+
+      const newReview = {
+        name,
+        rating,
+        text,
+        date: new Date().toISOString()
+      };
+
+      this.reviews.unshift(newReview);
+      localStorage.setItem('reviews', JSON.stringify(this.reviews));
+      
+      this.displayReviews();
+      document.getElementById('review-form').reset();
+
+      Toastify({
+        text: "Merci pour votre avis !",
+        duration: 3000
+      }).showToast();
+    },
+
+    displayReviews() {
+      const container = document.getElementById('reviews-container');
+      if (!container) return;
+
+      const reviewsHTML = this.reviews.map(review => `
+        <div class="testimonial-card">
+          <p class="rating">${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</p>
+          <p>"${review.text}"</p>
+          <p>- ${review.name}</p>
+        </div>
+      `).join('');
+
+      container.innerHTML = reviewsHTML;
+    }
+  };
+
+  const socialSharing = {
+    initialize() {
+      window.shareToFacebook = this.shareToFacebook;
+      window.shareToInstagram = this.shareToInstagram;
+      window.shareToWhatsapp = this.shareToWhatsapp;
+    },
+
+    shareToFacebook() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("J'ai découvert Delizioso, une authentique pizzeria italienne ! 🍕");
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
+    },
+
+    shareToInstagram() {
+      Toastify({
+        text: "Partagez votre expérience sur Instagram avec #DeliziosoPizzeria !",
+        duration: 3000,
+        style: {
+          background: "#e1306c"
+        }
+      }).showToast();
+    },
+
+    shareToWhatsapp() {
+      const text = encodeURIComponent("Découvrez Delizioso, une authentique pizzeria italienne ! 🍕\n");
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+    }
+  };
+
+  const chatSystem = {
+    initialize() {
+      this.chatbot = document.getElementById('chatbot');
+      this.trigger = document.getElementById('chatTrigger');
+      this.closeBtn = document.getElementById('chatClose');
+      this.input = document.getElementById('chatInput');
+      this.submit = document.getElementById('chatSubmit');
+      this.messages = document.getElementById('chatMessages');
+      
+      this.setupEventListeners();
+      this.responses = this.getDefaultResponses();
+    },
+
+    setupEventListeners() {
+      this.trigger.addEventListener('click', () => this.toggleChat());
+      this.closeBtn.addEventListener('click', () => this.toggleChat());
+      this.submit.addEventListener('click', () => this.handleUserMessage());
+      this.input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') this.handleUserMessage();
+      });
+    },
+
+    toggleChat() {
+      this.chatbot.classList.toggle('active');
+      if (this.chatbot.classList.contains('active')) {
+        this.input.focus();
+      }
+    },
+
+    handleUserMessage() {
+      const message = this.input.value.trim();
+      if (!message) return;
+
+      this.addMessage(message, 'user');
+      this.input.value = '';
+
+      setTimeout(() => {
+        const response = this.getResponse(message);
+        this.addMessage(response, 'bot');
+      }, 500);
+    },
+
+    addMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}-message`;
+      messageDiv.textContent = text;
+      this.messages.appendChild(messageDiv);
+      this.messages.scrollTop = this.messages.scrollHeight;
+    },
+
+    getDefaultResponses() {
+      return {
+        horaires: "Nous sommes ouverts du mardi au dimanche, de 12h à 14h30 et de 19h à 22h30.",
+        menu: "Vous pouvez consulter notre menu complet dans l'onglet 'Menu'. Nos spécialités incluent la Margherita D.O.P. et la Tartufo Nero.",
+        reservation: "Vous pouvez réserver une table en ligne dans l'onglet 'Réservation' ou nous appeler directement.",
+        default: "Je suis désolé, je n'ai pas compris votre demande. Pourriez-vous reformuler ou choisir parmi ces sujets : horaires, menu, réservation ?"
+      };
+    },
+
+    getResponse(message) {
+      message = message.toLowerCase();
+      if (message.includes('horaire') || message.includes('ouvert')) {
+        return this.responses.horaires;
+      } else if (message.includes('menu') || message.includes('carte') || message.includes('pizza')) {
+        return this.responses.menu;
+      } else if (message.includes('réserv') || message.includes('table')) {
+        return this.responses.reservation;
+      }
+      return this.responses.default;
+    }
+  };
+
+  socialSharing.initialize();
+  orderSystem.initialize();
+  loyaltySystem.initialize();
+  accessibility.initialize();
+  reservationSystem.initialize();
+  reviewSystem.initialize();
+  chatSystem.initialize();
+});
+</script>
+
+</body>
+</html>
